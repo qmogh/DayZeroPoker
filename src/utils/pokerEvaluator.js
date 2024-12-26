@@ -67,13 +67,16 @@ function evaluateSingleHand(cards) {
   const values = cards.map(card => CARD_VALUES[card.value]);
   const suits = cards.map(card => card.suit);
   
+  // Sort values in descending order for kicker comparison
+  const sortedValues = [...values].sort((a, b) => b - a);
+  
   // Check for flush
   const isFlush = suits.every(suit => suit === suits[0]);
   
   // Check for straight
-  const sortedValues = [...new Set(values)].sort((a, b) => a - b);
-  const isStraight = sortedValues.length === 5 && 
-                     sortedValues[4] - sortedValues[0] === 4;
+  const uniqueValues = [...new Set(values)].sort((a, b) => a - b);
+  const isStraight = uniqueValues.length === 5 && 
+                     uniqueValues[4] - uniqueValues[0] === 4;
   
   // Count value frequencies
   const valueCounts = values.reduce((acc, val) => {
@@ -81,45 +84,99 @@ function evaluateSingleHand(cards) {
     return acc;
   }, {});
   
-  // Determine hand type
+  const frequencies = Object.entries(valueCounts)
+    .sort((a, b) => b[1] - a[1] || b[0] - a[0])
+    .map(([value, count]) => ({value: Number(value), count}));
+
+  // Determine hand type with kickers
   if (isFlush && isStraight) {
     if (Math.max(...values) === 14) {
-      return { rank: HAND_RANKINGS.ROYAL_FLUSH, value: 14, name: 'Royal Flush' };
+      return { rank: HAND_RANKINGS.ROYAL_FLUSH, value: 14, kickers: sortedValues, name: 'Royal Flush', cards };
     }
-    return { rank: HAND_RANKINGS.STRAIGHT_FLUSH, value: Math.max(...values), name: 'Straight Flush' };
+    return { rank: HAND_RANKINGS.STRAIGHT_FLUSH, value: Math.max(...values), kickers: sortedValues, name: 'Straight Flush', cards };
   }
   
-  const frequencies = Object.values(valueCounts).sort((a, b) => b - a);
-  
-  if (frequencies[0] === 4) {
-    return { rank: HAND_RANKINGS.FOUR_OF_A_KIND, value: getKeyByValue(valueCounts, 4), name: 'Four of a Kind' };
+  if (frequencies[0].count === 4) {
+    const kickers = sortedValues.filter(v => v !== frequencies[0].value);
+    return { 
+      rank: HAND_RANKINGS.FOUR_OF_A_KIND, 
+      value: frequencies[0].value,
+      kickers: [kickers[0]], // Only highest kicker matters for four of a kind
+      name: 'Four of a Kind',
+      cards 
+    };
   }
   
-  if (frequencies[0] === 3 && frequencies[1] === 2) {
-    return { rank: HAND_RANKINGS.FULL_HOUSE, value: getKeyByValue(valueCounts, 3), name: 'Full House' };
+  if (frequencies[0].count === 3 && frequencies[1].count === 2) {
+    return { 
+      rank: HAND_RANKINGS.FULL_HOUSE, 
+      value: frequencies[0].value,
+      kickers: [frequencies[1].value], // Second value for full house
+      name: 'Full House',
+      cards 
+    };
   }
   
   if (isFlush) {
-    return { rank: HAND_RANKINGS.FLUSH, value: Math.max(...values), name: 'Flush' };
+    return { 
+      rank: HAND_RANKINGS.FLUSH, 
+      value: Math.max(...values),
+      kickers: sortedValues, // All cards matter for flush
+      name: 'Flush',
+      cards 
+    };
   }
   
   if (isStraight) {
-    return { rank: HAND_RANKINGS.STRAIGHT, value: Math.max(...values), name: 'Straight' };
+    return { 
+      rank: HAND_RANKINGS.STRAIGHT, 
+      value: Math.max(...values),
+      kickers: sortedValues,
+      name: 'Straight',
+      cards 
+    };
   }
   
-  if (frequencies[0] === 3) {
-    return { rank: HAND_RANKINGS.THREE_OF_A_KIND, value: getKeyByValue(valueCounts, 3), name: 'Three of a Kind' };
+  if (frequencies[0].count === 3) {
+    const kickers = sortedValues.filter(v => v !== frequencies[0].value).slice(0, 2);
+    return { 
+      rank: HAND_RANKINGS.THREE_OF_A_KIND, 
+      value: frequencies[0].value,
+      kickers,
+      name: 'Three of a Kind',
+      cards 
+    };
   }
   
-  if (frequencies[0] === 2 && frequencies[1] === 2) {
-    return { rank: HAND_RANKINGS.TWO_PAIR, value: Math.max(...Object.keys(valueCounts).filter(k => valueCounts[k] === 2)), name: 'Two Pair' };
+  if (frequencies[0].count === 2 && frequencies[1].count === 2) {
+    const kickers = sortedValues.filter(v => v !== frequencies[0].value && v !== frequencies[1].value);
+    return { 
+      rank: HAND_RANKINGS.TWO_PAIR, 
+      value: Math.max(frequencies[0].value, frequencies[1].value),
+      kickers: [Math.min(frequencies[0].value, frequencies[1].value), kickers[0]],
+      name: 'Two Pair',
+      cards 
+    };
   }
   
-  if (frequencies[0] === 2) {
-    return { rank: HAND_RANKINGS.ONE_PAIR, value: getKeyByValue(valueCounts, 2), name: 'One Pair' };
+  if (frequencies[0].count === 2) {
+    const kickers = sortedValues.filter(v => v !== frequencies[0].value).slice(0, 3);
+    return { 
+      rank: HAND_RANKINGS.ONE_PAIR, 
+      value: frequencies[0].value,
+      kickers,
+      name: 'One Pair',
+      cards 
+    };
   }
   
-  return { rank: HAND_RANKINGS.HIGH_CARD, value: Math.max(...values), name: 'High Card' };
+  return { 
+    rank: HAND_RANKINGS.HIGH_CARD, 
+    value: Math.max(...values),
+    kickers: sortedValues.slice(1), // All but the highest card
+    name: 'High Card',
+    cards 
+  };
 }
 
 function getCombinations(arr, r) {
