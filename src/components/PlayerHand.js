@@ -2,12 +2,12 @@ import Card from './Card';
 
 export default function PlayerHand({ player, onToggleWinner }) {
   return (
-    <div className={`border p-4 rounded-lg bg-white ${player.isWinning ? 'bg-green-100' : ''}`}>
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-black font-bold">Player {player.id}</h2>
+    <div className={`border p-3 rounded-lg bg-white ${player.isWinning ? 'bg-green-100' : ''}`}>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-black font-bold whitespace-nowrap">Player {player.id}</h2>
         <button
           onClick={() => onToggleWinner(player.id)}
-          className={`px-2 py-1 rounded text-sm ${
+          className={`px-2 py-1 rounded text-sm ml-2 ${
             player.isWinning 
               ? 'bg-green-500 text-white' 
               : 'bg-gray-200 text-black hover:bg-gray-300'

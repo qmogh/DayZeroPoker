@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="text-center py-4 text-slate-400">
       <p>
-        Made with ♥️ by{' '}
+        Made with ♥ by{' '}
         <a 
           href="https://amogh.sh" 
           target="_blank" 
