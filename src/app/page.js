@@ -59,12 +59,18 @@ export default function Home() {
                 className="border p-2 rounded text-black"
               />
             </div>
-            <button 
-              onClick={startGame}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              Start Game
-            </button>
+            {
+              playerCount > 8 ? (
+                <p className="text-red-500">Maximum 8 players</p>
+              ) : (
+                <button 
+                onClick={startGame}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Start Game
+              </button>
+              )
+            }
           </div>
         )}
 
