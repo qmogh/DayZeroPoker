@@ -106,6 +106,39 @@ export default function Home() {
     });
   };
 
+  // Move findWinners outside of GameSummary
+  const findWinners = (evaluations) => {
+    if (!evaluations || evaluations.length === 0) return [];
+    
+    return evaluations.reduce((winners, current) => {
+      if (!current.evaluation) return winners;
+      
+      if (winners.length === 0) return [current];
+      
+      const first = winners[0];
+      if (!first.evaluation) return [current];
+      
+      // Compare primary rank
+      if (current.evaluation.rank > first.evaluation.rank) return [current];
+      if (current.evaluation.rank < first.evaluation.rank) return winners;
+      
+      // Compare main value
+      if (current.evaluation.value > first.evaluation.value) return [current];
+      if (current.evaluation.value < first.evaluation.value) return winners;
+      
+      // Compare kickers if they exist
+      if (current.evaluation.kickers && first.evaluation.kickers) {
+        for (let i = 0; i < current.evaluation.kickers.length; i++) {
+          if (current.evaluation.kickers[i] > first.evaluation.kickers[i]) return [current];
+          if (current.evaluation.kickers[i] < first.evaluation.kickers[i]) return winners;
+        }
+      }
+      
+      // If we get here, it's a true tie
+      return [...winners, current];
+    }, []);
+  };
+
   const GameSummary = () => {
     // Helper function to evaluate hands at a specific stage
     const evaluateStage = (stage) => {
@@ -143,38 +176,6 @@ export default function Home() {
       });
     };
 
-    // Helper function to find winners at each stage
-    const findWinners = (evaluations) => {
-      if (!evaluations || evaluations.length === 0) return [];
-      
-      return evaluations.reduce((winners, current) => {
-        if (!current.evaluation) return winners;
-        
-        if (winners.length === 0) return [current];
-        
-        const first = winners[0];
-        if (!first.evaluation) return [current];
-        
-        // Compare primary rank
-        if (current.evaluation.rank < first.evaluation.rank) return winners;
-        
-        // Compare main value
-        if (current.evaluation.value > first.evaluation.value) return [current];
-        if (current.evaluation.value < first.evaluation.value) return winners;
-        
-        // Compare kickers if they exist
-        if (current.evaluation.kickers && first.evaluation.kickers) {
-          for (let i = 0; i < current.evaluation.kickers.length; i++) {
-            if (current.evaluation.kickers[i] > first.evaluation.kickers[i]) return [current];
-            if (current.evaluation.kickers[i] < first.evaluation.kickers[i]) return winners;
-          }
-        }
-        
-        // If we get here, it's a true tie
-        return [...winners, current];
-      }, []);
-    };
-
     const renderCards = (cards) => {
       if (!cards || cards.length === 0) return '';
       // Add validation to ensure cards exist
@@ -185,15 +186,28 @@ export default function Home() {
     };
 
     const renderWinningHands = (evaluations, winners) => {
-      return winners.map(winnerId => {
-        const winningHand = evaluations.find(e => e.id === winnerId)?.evaluation;
-        if (!winningHand) return null;
-        return (
-          <span key={winnerId} className="block ml-4 text-sm">
-            Player {winnerId}: {winningHand.name} ({renderCards(winningHand.cards)})
-          </span>
-        );
-      });
+      if (winners.length === 0) return null;
+      
+      const isTie = winners.length > 1;
+      
+      return (
+        <div className="ml-4">
+          {isTie && (
+            <div className="text-yellow-400 font-bold mb-2">
+              🏆 Tie Game! Multiple Winners 🏆
+            </div>
+          )}
+          {winners.map(winnerId => {
+            const winningHand = evaluations.find(e => e.id === winnerId)?.evaluation;
+            if (!winningHand) return null;
+            return (
+              <span key={winnerId} className="block text-sm">
+                Player {winnerId}: {winningHand.name} ({renderCards(winningHand.cards)})
+              </span>
+            );
+          })}
+        </div>
+      );
     };
 
     return (
@@ -310,14 +324,23 @@ export default function Home() {
             <CommunityCards cards={communityCards} gameStage={gameStage} />
             
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              {players.map((player) => (
-                <PlayerHand 
-                  key={player.id} 
-                  player={player}
-                  onToggleWinner={toggleWinner}
-                  isOverallWinner={gameStage === 'complete' && player.evaluation?.rank === Math.max(...players.map(p => p.evaluation?.rank || 0))}
-                />
-              ))}
+              {players.map((player) => {
+                const winners = gameStage === 'complete' 
+                  ? findWinners(players.map(p => ({ id: p.id, evaluation: p.evaluation })))
+                  : [];
+                const isWinner = winners.some(w => w.id === player.id);
+                const isTie = winners.length > 1;
+
+                return (
+                  <PlayerHand 
+                    key={player.id} 
+                    player={player}
+                    onToggleWinner={toggleWinner}
+                    isOverallWinner={isWinner}
+                    isTie={isTie}
+                  />
+                );
+              })}
             </div>
 
             {gameStage !== 'complete' && (
