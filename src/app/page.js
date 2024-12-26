@@ -42,6 +42,14 @@ export default function Home() {
     const currentIndex = stages.indexOf(gameStage);
     const nextStageValue = stages[currentIndex + 1];
     
+    // Carry forward winners from current stage to next stage
+    if (nextStageValue !== 'complete') {
+      setStageWinners(prev => ({
+        ...prev,
+        [nextStageValue]: prev[gameStage]
+      }));
+    }
+    
     // Deal cards only for specific stages
     switch(nextStageValue) {
       case 'flop':
@@ -66,6 +74,12 @@ export default function Home() {
         setPlayers(playerHands);
         break;
     }
+    
+    // Also carry forward the isWinning status for players
+    setPlayers(prev => prev.map(player => ({
+      ...player,
+      isWinning: stageWinners[gameStage].includes(player.id)
+    })));
     
     setGameStage(nextStageValue);
   };
@@ -131,13 +145,34 @@ export default function Home() {
 
     // Helper function to find winners at each stage
     const findWinners = (evaluations) => {
-      const bestRank = Math.max(...evaluations.map(e => e.evaluation.rank));
-      const bestHands = evaluations.filter(e => e.evaluation.rank === bestRank);
-      // If same rank, compare values
-      const bestValue = Math.max(...bestHands.map(e => e.evaluation.value));
-      return bestHands
-        .filter(e => e.evaluation.value === bestValue)
-        .map(e => e.id);
+      if (!evaluations || evaluations.length === 0) return [];
+      
+      return evaluations.reduce((winners, current) => {
+        if (!current.evaluation) return winners;
+        
+        if (winners.length === 0) return [current];
+        
+        const first = winners[0];
+        if (!first.evaluation) return [current];
+        
+        // Compare primary rank
+        if (current.evaluation.rank < first.evaluation.rank) return winners;
+        
+        // Compare main value
+        if (current.evaluation.value > first.evaluation.value) return [current];
+        if (current.evaluation.value < first.evaluation.value) return winners;
+        
+        // Compare kickers if they exist
+        if (current.evaluation.kickers && first.evaluation.kickers) {
+          for (let i = 0; i < current.evaluation.kickers.length; i++) {
+            if (current.evaluation.kickers[i] > first.evaluation.kickers[i]) return [current];
+            if (current.evaluation.kickers[i] < first.evaluation.kickers[i]) return winners;
+          }
+        }
+        
+        // If we get here, it's a true tie
+        return [...winners, current];
+      }, []);
     };
 
     const renderCards = (cards) => {
@@ -149,13 +184,24 @@ export default function Home() {
         .join(', ');
     };
 
+    const renderWinningHands = (evaluations, winners) => {
+      return winners.map(winnerId => {
+        const winningHand = evaluations.find(e => e.id === winnerId)?.evaluation;
+        if (!winningHand) return null;
+        return (
+          <span key={winnerId} className="block ml-4 text-sm">
+            Player {winnerId}: {winningHand.name} ({renderCards(winningHand.cards)})
+          </span>
+        );
+      });
+    };
+
     return (
       <div className="mt-8 p-4 bg-slate-700 rounded-lg">
         <h2 className="text-xl font-bold mb-4">Hand Summary</h2>
         {['preflop', 'flop', 'turn', 'river'].map(stage => {
           const stageEvaluations = evaluateStage(stage);
           const actualWinners = findWinners(stageEvaluations);
-          const winningHand = stageEvaluations.find(e => e.id === actualWinners[0])?.evaluation;
           
           return (
             <div key={stage} className="mb-4 border-b border-slate-600 pb-2">
@@ -167,13 +213,11 @@ export default function Home() {
                     : 'None'}
                 </p>
                 <p className="text-green-400">
-                  Actually winning: Player(s) {actualWinners.join(', ')} 
-                  {stage !== 'preflop' && winningHand && (
+                  Actually winning: Player(s) {actualWinners.map(w => w.id).join(', ')}
+                  {stage !== 'preflop' && (
                     <>
                       <br />
-                      <span className="ml-4 text-sm">
-                        with {winningHand.name} ({renderCards(winningHand.cards)})
-                      </span>
+                      {renderWinningHands(stageEvaluations, actualWinners.map(w => w.id))}
                     </>
                   )}
                 </p>
@@ -271,6 +315,7 @@ export default function Home() {
                   key={player.id} 
                   player={player}
                   onToggleWinner={toggleWinner}
+                  isOverallWinner={gameStage === 'complete' && player.evaluation?.rank === Math.max(...players.map(p => p.evaluation?.rank || 0))}
                 />
               ))}
             </div>

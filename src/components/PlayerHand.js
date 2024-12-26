@@ -1,8 +1,11 @@
 import Card from './Card';
 
-export default function PlayerHand({ player, onToggleWinner }) {
+export default function PlayerHand({ player, onToggleWinner, isOverallWinner }) {
   return (
-    <div className={`border p-3 rounded-lg bg-white ${player.isWinning ? 'bg-green-100' : ''}`}>
+    <div className={`border p-3 rounded-lg ${
+      isOverallWinner ? 'bg-green-100' : 
+      player.isWinning ? 'bg-white' : 'bg-white'
+    }`}>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-black font-bold whitespace-nowrap">Player {player.id}</h2>
         <button
