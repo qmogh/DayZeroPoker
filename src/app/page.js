@@ -38,39 +38,34 @@ export default function Home() {
   const nextStage = () => {
     const stages = ['preflop', 'flop', 'turn', 'river', 'complete'];
     const currentIndex = stages.indexOf(gameStage);
+    const nextStageValue = stages[currentIndex + 1];
     
-    if (gameStage !== 'complete') {
-      setStageWinners(prev => ({
-        ...prev,
-        [gameStage]: players.filter(p => p.isWinning).map(p => p.id)
-      }));
+    // Deal cards only for specific stages
+    switch(nextStageValue) {
+      case 'flop':
+        const flop = [deck[0], deck[1], deck[2]];
+        console.log('Dealing flop:', flop.map(c => `${c.value}${c.suit}`));
+        setCommunityCards(flop);
+        setDeck(prev => prev.slice(3));
+        break;
+      case 'turn':
+      case 'river':
+        const newCard = deck[0];
+        console.log(`Dealing ${nextStageValue}:`, `${newCard.value}${newCard.suit}`);
+        setCommunityCards(prev => [...prev, newCard]);
+        setDeck(prev => prev.slice(1));
+        break;
+      case 'complete':
+        // Don't deal any cards, just evaluate final hands
+        const playerHands = players.map(player => ({
+          ...player,
+          evaluation: evaluateHand(player.cards, communityCards)
+        }));
+        setPlayers(playerHands);
+        break;
     }
     
-    if (currentIndex === 0) {
-      const flop = [deck[0], deck[1], deck[2]];
-      console.log('Dealing flop:', flop.map(c => `${c.value}${c.suit}`));
-      setCommunityCards(flop);
-      setDeck(prev => prev.slice(3));
-    } else if (currentIndex < stages.length - 2) { // This stupid line....i was so confused why my hand evaluations were off.
-      const newCard = deck[0];
-      console.log(`Dealing ${stages[currentIndex + 1]}:`, `${newCard.value}${newCard.suit}`);
-      setCommunityCards(prev => [...prev, newCard]);
-      setDeck(prev => prev.slice(1));
-    }
-    
-    if (stages[currentIndex + 1] === 'complete') {
-      const playerHands = players.map(player => ({
-        ...player,
-        evaluation: evaluateHand(player.cards, [...communityCards, deck[0]])
-      }));
-      
-      const bestHand = Math.max(...playerHands.map(p => p.evaluation.rank));
-      const winners = playerHands.filter(p => p.evaluation.rank === bestHand);
-      
-      setPlayers(playerHands);
-    }
-    
-    setGameStage(stages[currentIndex + 1]);
+    setGameStage(nextStageValue);
   };
 
   const toggleWinner = (playerId) => {
