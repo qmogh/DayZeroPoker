@@ -5,6 +5,7 @@ import PlayerHand from "@/components/PlayerHand";
 import CommunityCards from "@/components/CommunityCards";
 import { evaluateHand } from '@/utils/pokerEvaluator';
 import HandRankingsModal from "@/components/HandRankingsModal";
+import { testHandEvaluation } from '@/utils/testPokerEvaluator';
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -176,6 +177,11 @@ export default function Home() {
     );
   };
 
+  const runTests = () => {
+    console.clear();
+    testHandEvaluation();
+  };
+
   return (
     <div className="min-h-screen p-8 bg-slate-800">
       <main className="max-w-4xl mx-auto">
@@ -192,30 +198,50 @@ export default function Home() {
         </div>
         
         {gameStage === 'setup' && (
-          <div className="space-y-4">
-            <div>
-              <label className="block mb-2">Number of Players (2-8):</label>
-              <input 
-                type="number" 
-                min="2" 
-                max="8" 
-                value={playerCount}
-                onChange={(e) => setPlayerCount(Number(e.target.value))}
-                className="border p-2 rounded text-black"
-              />
+          <div className="space-y-6">
+            <div className="bg-slate-700 p-6 rounded-lg">
+              <h2 className="text-xl font-bold mb-4">How to Use</h2>
+              <div className="space-y-4 text-slate-200">
+                <p>
+                  This poker helper lets you practice identifying winning hands at each stage of Texas Hold'em:
+                </p>
+                <ol className="list-decimal list-inside space-y-2 ml-4">
+                  <li>Select the number of players (2-8)</li>
+                  <li>After dealing, mark who you think is winning by clicking "Mark Winner"</li>
+                  <li>Progress through each stage (Flop, Turn, River)</li>
+                  <li>At the end, see if you correctly identified the winning hand at each stage</li>
+                </ol>
+                <p className="mt-4">
+                  Use the "Show Hand Rankings" button anytime to view poker hand rankings from Royal Flush to High Card.
+                </p>
+              </div>
             </div>
-            {
-              playerCount > 8 ? (
-                <p className="text-red-500">Maximum 8 players</p>
-              ) : (
-                <button 
-                onClick={startGame}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                Start Game
-              </button>
-              )
-            }
+
+            <div className="space-y-4">
+              <div>
+                <label className="block mb-2">Number of Players (2-8):</label>
+                <input 
+                  type="number" 
+                  min="2" 
+                  max="8" 
+                  value={playerCount}
+                  onChange={(e) => setPlayerCount(Number(e.target.value))}
+                  className="border p-2 rounded text-black"
+                />
+              </div>
+              {
+                playerCount > 8 ? (
+                  <p className="text-red-500">Maximum 8 players</p>
+                ) : (
+                  <button 
+                    onClick={startGame}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Start Game
+                  </button>
+                )
+              }
+            </div>
           </div>
         )}
 
@@ -262,6 +288,15 @@ export default function Home() {
           isOpen={showRankings} 
           onClose={() => setShowRankings(false)} 
         />
+
+        {process.env.NODE_ENV === 'development' && (
+          <button
+            onClick={runTests}
+            className="bg-purple-500 text-white mt-5 px-4 py-2 rounded hover:bg-purple-600"
+          >
+            Run Hand Tests
+          </button>
+        )}
       </main>
     </div>
   );
