@@ -338,6 +338,7 @@ export default function Home() {
                     onToggleWinner={toggleWinner}
                     isOverallWinner={isWinner}
                     isTie={isTie}
+                    gameStage={gameStage}
                   />
                 );
               })}
