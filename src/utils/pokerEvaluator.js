@@ -1,3 +1,5 @@
+import { SUITS, VALUES } from './constants';
+
 const HAND_RANKINGS = {
   ROYAL_FLUSH: 10,
   STRAIGHT_FLUSH: 9,
@@ -19,17 +21,31 @@ const CARD_VALUES = {
 function evaluateHand(playerCards, communityCards) {
   const allCards = [...playerCards, ...communityCards];
   
+  // Add validation
+  console.log('Evaluating hand with cards:', allCards);
+  
+  // Validate all cards have proper suit and value
+  const validCards = allCards.filter(card => 
+    card && 
+    card.suit && 
+    card.value && 
+    SUITS.includes(card.suit) && 
+    VALUES.includes(card.value)
+  );
+
+  console.log('Valid cards:', validCards);
+  
   // Get all possible 5-card combinations
-  const combinations = getCombinations(allCards, 5);
+  const combinations = getCombinations(validCards, 5);
   
   // Evaluate each combination and return the best one
-  let bestHand = { rank: 0, value: 0, name: '' };
+  let bestHand = { rank: 0, value: 0, name: '', cards: [] };
   
   for (const combo of combinations) {
     const evaluation = evaluateSingleHand(combo);
     if (evaluation.rank > bestHand.rank || 
        (evaluation.rank === bestHand.rank && evaluation.value > bestHand.value)) {
-      bestHand = evaluation;
+      bestHand = { ...evaluation, cards: combo };
     }
   }
   
