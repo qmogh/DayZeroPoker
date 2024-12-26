@@ -7,8 +7,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Poker Helper",
-  description: "A simple poker helper app",
+  title: "Who's Winning? Poker Hand Trainer",
+  description: "Practice identifying winning poker hands at every stage of Texas Hold'em",
 };
 
 export default function RootLayout({ children }) {

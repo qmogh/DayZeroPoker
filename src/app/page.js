@@ -186,7 +186,7 @@ export default function Home() {
     <div className="min-h-screen p-8 bg-slate-800">
       <main className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Poker Helper</h1>
+          <h1 className="text-3xl font-bold mb-8 text-white">Who's Winning? Poker Hand Trainer</h1>
           {gameStage != "setup" && (
             <button
             onClick={() => setShowRankings(true)}
@@ -203,7 +203,7 @@ export default function Home() {
               <h2 className="text-xl font-bold mb-4">How to Use</h2>
               <div className="space-y-4 text-slate-200">
                 <p>
-                  This poker helper lets you practice identifying winning hands at each stage of Texas Hold'em:
+                  This poker hand trainer lets you practice identifying winning hands at each stage of Texas Hold'em:
                 </p>
                 <ol className="list-decimal list-inside space-y-2 ml-4">
                   <li>Select the number of players (2-8)</li>
