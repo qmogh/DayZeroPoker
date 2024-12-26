@@ -19,12 +19,22 @@ const CARD_VALUES = {
 };
 
 function evaluateHand(playerCards, communityCards) {
+  console.log('=== Hand Evaluation Debug ===');
+  console.log('Player cards:', playerCards.map(c => `${c.value}${c.suit}`));
+  console.log('Community cards:', communityCards.map(c => `${c.value}${c.suit}`));
+  
   const allCards = [...playerCards, ...communityCards];
   
-  // Add validation
-  console.log('Evaluating hand with cards:', allCards);
+  // Check for duplicate cards
+  const cardStrings = allCards.map(c => `${c.value}${c.suit}`);
+  const uniqueCards = new Set(cardStrings);
+  if (uniqueCards.size !== allCards.length) {
+    console.error('Duplicate cards detected!');
+    console.log('All cards:', cardStrings);
+    console.log('Unique cards:', [...uniqueCards]);
+  }
   
-  // Validate all cards have proper suit and value
+  // Validate all cards
   const validCards = allCards.filter(card => 
     card && 
     card.suit && 
@@ -33,12 +43,9 @@ function evaluateHand(playerCards, communityCards) {
     VALUES.includes(card.value)
   );
 
-  console.log('Valid cards:', validCards);
-  
   // Get all possible 5-card combinations
   const combinations = getCombinations(validCards, 5);
   
-  // Evaluate each combination and return the best one
   let bestHand = { rank: 0, value: 0, name: '', cards: [] };
   
   for (const combo of combinations) {
@@ -46,6 +53,10 @@ function evaluateHand(playerCards, communityCards) {
     if (evaluation.rank > bestHand.rank || 
        (evaluation.rank === bestHand.rank && evaluation.value > bestHand.value)) {
       bestHand = { ...evaluation, cards: combo };
+      console.log('New best hand found:', {
+        name: bestHand.name,
+        cards: combo.map(c => `${c.value}${c.suit}`)
+      });
     }
   }
   

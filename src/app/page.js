@@ -4,6 +4,7 @@ import { dealCards } from "@/utils/deck";
 import PlayerHand from "@/components/PlayerHand";
 import CommunityCards from "@/components/CommunityCards";
 import { evaluateHand } from '@/utils/pokerEvaluator';
+import HandRankingsModal from "@/components/HandRankingsModal";
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -17,9 +18,17 @@ export default function Home() {
     turn: [],
     river: []
   });
+  const [showRankings, setShowRankings] = useState(false);
 
   const startGame = () => {
     const { players: newPlayers, remainingDeck } = dealCards(playerCount);
+    console.log('=== New Game Started ===');
+    console.log('Players:', newPlayers.map(p => ({
+      id: p.id,
+      cards: p.cards.map(c => `${c.value}${c.suit}`)
+    })));
+    console.log('Remaining deck size:', remainingDeck.length);
+    
     setPlayers(newPlayers);
     setDeck(remainingDeck);
     setCommunityCards([]);
@@ -38,10 +47,14 @@ export default function Home() {
     }
     
     if (currentIndex === 0) {
-      setCommunityCards([deck[0], deck[1], deck[2]]);
+      const flop = [deck[0], deck[1], deck[2]];
+      console.log('Dealing flop:', flop.map(c => `${c.value}${c.suit}`));
+      setCommunityCards(flop);
       setDeck(prev => prev.slice(3));
-    } else if (currentIndex < stages.length - 1) {
-      setCommunityCards(prev => [...prev, deck[0]]);
+    } else if (currentIndex < stages.length - 2) { // This stupid line....i was so confused why my hand evaluations were off. Few!!
+      const newCard = deck[0];
+      console.log(`Dealing ${stages[currentIndex + 1]}:`, `${newCard.value}${newCard.suit}`);
+      setCommunityCards(prev => [...prev, newCard]);
       setDeck(prev => prev.slice(1));
     }
     
@@ -171,7 +184,17 @@ export default function Home() {
   return (
     <div className="min-h-screen p-8 bg-slate-800">
       <main className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-white">Poker Helper</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Poker Helper</h1>
+          {gameStage != "setup" && (
+            <button
+            onClick={() => setShowRankings(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Show Hand Rankings
+          </button>
+          )}
+        </div>
         
         {gameStage === 'setup' && (
           <div className="space-y-4">
@@ -239,6 +262,11 @@ export default function Home() {
             )}
           </div>
         )}
+
+        <HandRankingsModal 
+          isOpen={showRankings} 
+          onClose={() => setShowRankings(false)} 
+        />
       </main>
     </div>
   );
