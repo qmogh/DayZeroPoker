@@ -75,6 +75,21 @@ export default function Home() {
       ...player,
       isWinning: player.id === playerId ? !player.isWinning : player.isWinning
     })));
+
+    setStageWinners(prev => {
+      const currentWinners = new Set(prev[gameStage] || []);
+      
+      if (currentWinners.has(playerId)) {
+        currentWinners.delete(playerId);
+      } else {
+        currentWinners.add(playerId);
+      }
+      
+      return {
+        ...prev,
+        [gameStage]: Array.from(currentWinners)
+      };
+    });
   };
 
   const GameSummary = () => {
