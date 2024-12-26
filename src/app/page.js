@@ -6,6 +6,7 @@ import CommunityCards from "@/components/CommunityCards";
 import { evaluateHand } from '@/utils/pokerEvaluator';
 import HandRankingsModal from "@/components/HandRankingsModal";
 import { testHandEvaluation } from '@/utils/testPokerEvaluator';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -298,6 +299,7 @@ export default function Home() {
           </button>
         )}
       </main>
+      <Footer />
     </div>
   );
 }
