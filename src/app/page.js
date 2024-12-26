@@ -51,7 +51,7 @@ export default function Home() {
       console.log('Dealing flop:', flop.map(c => `${c.value}${c.suit}`));
       setCommunityCards(flop);
       setDeck(prev => prev.slice(3));
-    } else if (currentIndex < stages.length - 2) { // This stupid line....i was so confused why my hand evaluations were off. Few!!
+    } else if (currentIndex < stages.length - 2) { // This stupid line....i was so confused why my hand evaluations were off.
       const newCard = deck[0];
       console.log(`Dealing ${stages[currentIndex + 1]}:`, `${newCard.value}${newCard.suit}`);
       setCommunityCards(prev => [...prev, newCard]);
