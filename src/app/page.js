@@ -23,6 +23,12 @@ export default function Home() {
   const [showRankings, setShowRankings] = useState(false);
 
   const startGame = () => {
+    setStageWinners({
+      preflop: [],
+      flop: [],
+      turn: [],
+      river: []
+    });
     const { players: newPlayers, remainingDeck } = dealCards(playerCount);
     console.log('=== New Game Started ===');
     console.log('Players:', newPlayers.map(p => ({
