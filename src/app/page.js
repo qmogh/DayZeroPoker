@@ -320,7 +320,7 @@ export default function Home() {
 
             <div className="space-y-4">
               <div>
-                <label className="block mb-2">Number of Players (2-8):</label>
+                <label className="block mb-2">Number of Players (2-10):</label>
                 <input 
                   type="number" 
                   min="2" 
@@ -331,8 +331,10 @@ export default function Home() {
                 />
               </div>
               {
-                playerCount > 8 ? (
-                  <p className="text-red-500">Maximum 8 players</p>
+                playerCount > 10 ? (
+                  <p className="text-red-500">Maximum 10 players</p>
+                ) : playerCount < 2 ? (
+                  <p className="text-red-500">Minimum 2 players</p>
                 ) : (
                   <button 
                     onClick={startGame}
