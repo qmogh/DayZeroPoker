@@ -9,6 +9,7 @@ import { testHandEvaluation } from '@/utils/testPokerEvaluator';
 import Footer from '@/components/Footer';
 import { calculateWinningOdds } from '@/utils/oddsCalculator';
 import ViewCounter from '@/components/ViewCounter';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -219,6 +220,7 @@ export default function Home() {
       
       return (
         <div className="ml-4">
+          <Analytics />
           {isTie && (
             <div className="text-yellow-400 font-bold mb-2">
               🏆 Tie Game! Multiple Winners 🏆
