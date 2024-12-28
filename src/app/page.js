@@ -7,6 +7,7 @@ import { evaluateHand } from '@/utils/pokerEvaluator';
 import HandRankingsModal from "@/components/HandRankingsModal";
 import { testHandEvaluation } from '@/utils/testPokerEvaluator';
 import Footer from '@/components/Footer';
+import { calculateWinningOdds } from '@/utils/oddsCalculator';
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -21,6 +22,8 @@ export default function Home() {
     river: []
   });
   const [showRankings, setShowRankings] = useState(false);
+  const [showPottOdds, setShowPottOdds] = useState(false);
+  const [odds, setOdds] = useState({});
 
   const startGame = () => {
     setStageWinners({
@@ -48,6 +51,21 @@ export default function Home() {
     const currentIndex = stages.indexOf(gameStage);
     const nextStageValue = stages[currentIndex + 1];
     
+    // Calculate odds for each player before updating stage
+    if (nextStageValue !== 'complete') {
+      const playerOdds = players.reduce((acc, player) => {
+        const calculatedOdds = calculateWinningOdds(
+          player.cards,
+          communityCards,
+          players.length
+        );
+        acc[player.id] = calculatedOdds;
+        return acc;
+      }, {});
+      
+      setOdds(playerOdds);
+    }
+
     // Carry forward winners from current stage to next stage
     if (nextStageValue !== 'complete') {
       setStageWinners(prev => ({
@@ -336,6 +354,7 @@ export default function Home() {
                   : [];
                 const isWinner = winners.some(w => w.id === player.id);
                 const isTie = winners.length > 1;
+                const playerOdds = odds[player.id];
 
                 return (
                   <PlayerHand 
@@ -343,22 +362,34 @@ export default function Home() {
                     player={player}
                     onToggleWinner={toggleWinner}
                     isOverallWinner={isWinner}
-                    isTie={isTie}
                     gameStage={gameStage}
+                    odds={playerOdds}
+                    showOdds={showPottOdds}
                   />
                 );
               })}
             </div>
 
-            {gameStage !== 'complete' && (
-              <button
-                onClick={nextStage}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              >
-                {gameStage === 'preflop' ? 'Deal Flop' :
-                 gameStage === 'flop' ? 'Deal Turn' :
-                 gameStage === 'turn' ? 'Deal River' : 'Complete Hand'}
-              </button>
+            <div className="flex gap-4">
+              {gameStage !== 'complete' && (
+                <button
+                  onClick={nextStage}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  {gameStage === 'preflop' ? 'Deal Flop' :
+                   gameStage === 'flop' ? 'Deal Turn' :
+                   gameStage === 'turn' ? 'Deal River' : 'Complete Hand'}
+                </button>
+              )}
+              {gameStage !== 'complete' && (
+                <button
+                  onClick={() => setShowPottOdds(!showPottOdds)}
+                  className="bg-orange-300 text-white px-4 py-2 rounded hover:bg-orange-400"
+                >
+                  {showPottOdds ? 'Hide Pot Odds' : 'Show Pot Odds'}
+                </button>
+              )}
+            </div>
             )}
 
             {gameStage === 'complete' && (

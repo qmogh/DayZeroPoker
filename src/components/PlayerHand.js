@@ -1,6 +1,6 @@
 import Card from './Card';
 
-export default function PlayerHand({ player, onToggleWinner, isOverallWinner, gameStage }) {
+export default function PlayerHand({ player, onToggleWinner, isOverallWinner, gameStage, odds, showOdds }) {
   return (
     <div className={`
       border p-3 rounded-lg relative
@@ -29,11 +29,26 @@ export default function PlayerHand({ player, onToggleWinner, isOverallWinner, ga
           </button>
         )}
       </div>
-      <div className="flex gap-2 justify-center">
+      <div className="flex gap-2 justify-center mb-2">
         {player.cards.map((card, index) => (
           <Card key={index} card={card} />
         ))}
       </div>
+      {showOdds && odds && gameStage !== 'setup' && gameStage !== 'complete' && (
+        <div className="text-center text-sm mt-2">
+          <div className="font-medium text-blue-600">
+            Win: {odds.winningOdds}%
+          </div>
+          {odds.tieOdds > 0 && (
+            <div className="text-xs text-gray-600">
+              Tie: {odds.tieOdds}%
+            </div>
+          )}
+          <div className="text-xs text-gray-600">
+            Total Equity: {odds.totalEquity}%
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
