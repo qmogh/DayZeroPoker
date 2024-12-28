@@ -8,6 +8,7 @@ import HandRankingsModal from "@/components/HandRankingsModal";
 import { testHandEvaluation } from '@/utils/testPokerEvaluator';
 import Footer from '@/components/Footer';
 import { calculateWinningOdds } from '@/utils/oddsCalculator';
+import ViewCounter from '@/components/ViewCounter';
 
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
@@ -422,6 +423,7 @@ export default function Home() {
         )}
       </main>
       <Footer />
+      {gameStage === 'setup' && <ViewCounter />}
     </div>
   );
 }
