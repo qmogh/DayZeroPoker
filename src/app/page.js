@@ -32,6 +32,8 @@ export default function Home() {
       turn: [],
       river: []
     });
+    setShowPottOdds(false);
+    setOdds({});
     const { players: newPlayers, remainingDeck } = dealCards(playerCount);
     console.log('=== New Game Started ===');
     console.log('Players:', newPlayers.map(p => ({
@@ -381,7 +383,7 @@ export default function Home() {
                    gameStage === 'turn' ? 'Deal River' : 'Complete Hand'}
                 </button>
               )}
-              {gameStage !== 'complete' && (
+              {gameStage !== 'complete' && gameStage !== 'preflop' && (
                 <button
                   onClick={() => setShowPottOdds(!showPottOdds)}
                   className="bg-orange-300 text-white px-4 py-2 rounded hover:bg-orange-400"
@@ -390,7 +392,6 @@ export default function Home() {
                 </button>
               )}
             </div>
-            )}
 
             {gameStage === 'complete' && (
               <>
