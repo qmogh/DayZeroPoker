@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { dealCards } from "@/utils/deck";
 import PlayerHand from "@/components/PlayerHand";
 import CommunityCards from "@/components/CommunityCards";
@@ -238,6 +238,20 @@ export default function Home() {
         </div>
       );
     };
+
+    const stageEvaluations = useMemo(() => ({
+      preflop: evaluateStage('preflop'),
+      flop: evaluateStage('flop'),
+      turn: evaluateStage('turn'),
+      river: evaluateStage('river')
+    }), [players, communityCards]); // Add dependencies based on what evaluateStage uses
+
+    const stageWinnersList = useMemo(() => ({
+      preflop: findWinners(stageEvaluations.preflop),
+      flop: findWinners(stageEvaluations.flop),
+      turn: findWinners(stageEvaluations.turn),
+      river: findWinners(stageEvaluations.river)
+    }), [stageEvaluations]);
 
     return (
       <div className="mt-8 p-4 bg-slate-700 rounded-lg">
