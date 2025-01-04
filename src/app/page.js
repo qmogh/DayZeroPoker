@@ -426,11 +426,9 @@ export default function Home() {
           </div>
         )}
 
-        <HandRankingsModal 
-          isOpen={showRankings} 
+        {showRankings && <HandRankingsModal 
           onClose={() => setShowRankings(false)} 
-        />
-
+          />}
         {process.env.NODE_ENV === 'development' && (
           <button
             onClick={runTests}

@@ -1,5 +1,4 @@
-export default function HandRankingsModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
+export default function HandRankingsModal({onClose }) {
 
   const rankings = [
     { name: 'Royal Flush', description: 'A♠ K♠ Q♠ J♠ 10♠ (same suit)' },
