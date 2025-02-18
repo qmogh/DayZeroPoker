@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { HAND_GROUPS, getRandomHand, getHandGroup } from '@/utils/handGroups';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 
 export default function HandGroupQuiz() {
   const [currentHand, setCurrentHand] = useState(null);
@@ -33,6 +34,7 @@ export default function HandGroupQuiz() {
 
   return (
     <div className="min-h-screen p-8 bg-slate-800">
+      <Header/>
       <main className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Hand Group Quiz</h1>
@@ -51,6 +53,7 @@ export default function HandGroupQuiz() {
             {result !== null && (
               <p className={`text-lg ${result ? 'text-green-400' : 'text-red-400'}`}>
                 {result ? 'Correct!' : 'Incorrect!'} This hand belongs to Group {getHandGroup(currentHand)}
+                {currentHand == "88" && ". This is my buddy Gavin's favorite hand, by the way."}
               </p>
             )}
           </div>

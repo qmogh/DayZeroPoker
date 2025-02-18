@@ -52,6 +52,7 @@ export default function Home() {
         </div>
       </main>
       <Footer />
+      <ViewCounter/>
     </div>
   );
 }
