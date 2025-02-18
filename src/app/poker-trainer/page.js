@@ -11,6 +11,15 @@ import { calculateWinningOdds } from '@/utils/oddsCalculator';
 import ViewCounter from '@/components/ViewCounter';
 import { Analytics } from "@vercel/analytics/react"
 import Header from "@/components/Header";
+
+const STAGE_CARD_COUNT = {
+  'preflop': 0,
+  'flop': 3,
+  'turn': 4,
+  'river': 5,
+  'complete': 5
+};
+
 export default function Home() {
   const [playerCount, setPlayerCount] = useState(2);
   const [gameStage, setGameStage] = useState('setup');
@@ -27,6 +36,20 @@ export default function Home() {
   const [showPottOdds, setShowPottOdds] = useState(false);
   const [odds, setOdds] = useState({});
   const [visibleCardCount, setVisibleCardCount] = useState(0);
+
+  const calculatePlayerOdds = useMemo(() => {
+    if (gameStage === 'complete') return {};
+    
+    return players.reduce((acc, player) => {
+      const calculatedOdds = calculateWinningOdds(
+        player.cards,
+        communityCards,
+        players.length
+      );
+      acc[player.id] = calculatedOdds;
+      return acc;
+    }, {});
+  }, [players, communityCards, gameStage]);
 
   const startGame = () => {
     const { players: newPlayers, remainingDeck: newDeck } = dealCards(playerCount);
@@ -56,40 +79,18 @@ export default function Home() {
 
     const nextGameStage = stages[gameStage];
     
-    // Calculate odds if not at complete stage
     if (nextGameStage !== 'complete') {
-      const playerOdds = players.reduce((acc, player) => {
-        const calculatedOdds = calculateWinningOdds(
-          player.cards,
-          communityCards,
-          players.length
-        );
-        acc[player.id] = calculatedOdds;
-        return acc;
-      }, {});
-      
-      setOdds(playerOdds);
+      setOdds(calculatePlayerOdds);
     }
 
-    // Update visible cards based on stage
-    switch(nextGameStage) {
-      case 'flop':
-        setVisibleCardCount(3);
-        break;
-      case 'turn':
-        setVisibleCardCount(4);
-        break;
-      case 'river':
-        setVisibleCardCount(5);
-        break;
-      case 'complete':
-        // Evaluate final hands
-        const finalPlayers = players.map(player => {
-          const evaluation = evaluateHand(player.cards, communityCards);
-          return { ...player, evaluation };
-        });
-        setPlayers(finalPlayers);
-        break;
+    setVisibleCardCount(STAGE_CARD_COUNT[nextGameStage]);
+    
+    if (nextGameStage === 'complete') {
+      const finalPlayers = players.map(player => {
+        const evaluation = evaluateHand(player.cards, communityCards);
+        return { ...player, evaluation };
+      });
+      setPlayers(finalPlayers);
     }
     
     setGameStage(nextGameStage);

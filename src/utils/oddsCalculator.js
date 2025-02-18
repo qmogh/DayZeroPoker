@@ -1,11 +1,15 @@
 import { createDeck } from './deck';
 import { evaluateHand } from './pokerEvaluator';
 
-const NUM_SIMULATIONS = 1000;
+const NUM_SIMULATIONS = 200;
 
 function simulateRemainingCards(deck, numNeeded) {
-  const shuffledDeck = [...deck].sort(() => Math.random() - 0.5);
-  return shuffledDeck.slice(0, numNeeded);
+  const shuffled = [...deck];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, numNeeded);
 }
 
 function compareHands(hand1, hand2) {
