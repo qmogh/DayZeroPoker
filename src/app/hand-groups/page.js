@@ -8,6 +8,7 @@ export default function HandGroupQuiz() {
   const [result, setResult] = useState(null);
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
+  const [showHandLists, setShowHandLists] = useState(false);
 
   useEffect(() => {
     newHand();
@@ -32,7 +33,15 @@ export default function HandGroupQuiz() {
   return (
     <div className="min-h-screen p-8 bg-slate-800">
       <main className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-white">Hand Group Quiz</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Hand Group Quiz</h1>
+          <button
+            onClick={() => setShowHandLists(!showHandLists)}
+            className="bg-slate-600 text-white px-4 py-2 rounded hover:bg-slate-500"
+          >
+            {showHandLists ? 'Hide Hand Lists' : 'Show Hand Lists'}
+          </button>
+        </div>
         
         <div className="bg-slate-700 p-6 rounded-lg mb-8">
           <div className="text-center mb-6">
@@ -63,7 +72,9 @@ export default function HandGroupQuiz() {
               >
                 <div className="font-bold">Group {groupId}</div>
                 <div className="text-sm">{group.name}</div>
-                <div className="text-xs mt-1 opacity-75">{group.hands.join(', ')}</div>
+                {showHandLists && (
+                  <div className="text-xs mt-1 opacity-75">{group.hands.join(', ')}</div>
+                )}
               </button>
             ))}
           </div>
