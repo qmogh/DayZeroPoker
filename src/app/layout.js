@@ -7,16 +7,16 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Who's Winning? Poker Hand Trainer",
-  description: "Practice identifying winning poker hands at every stage of Texas Hold'em",
+  title: "Day Zero Poker",
+  description: "Master the fundamentals of poker from day zero",
   openGraph: {
-    title: "Who's Winning? Poker Hand Trainer",
-    description: "Practice identifying winning poker hands at every stage of Texas Hold'em",
-    url: 'https://pokerhandtrainer.vercel.app',
-    siteName: "Poker Hand Trainer",
+    title: "Day Zero Poker",
+    description: "Master the fundamentals of poker from day zero",
+    url: 'https://dayzeropoker.vercel.app',
+    siteName: "Day Zero Poker",
     images: [
       {
-        url: 'https://images.unsplash.com/photo-1541278107931-e006523892df',  // Random poker image from Unsplash
+        url: 'https://images.unsplash.com/photo-1541278107931-e006523892df',
         width: 1200,
         height: 630,
         alt: 'Poker cards on a green felt table',
@@ -27,9 +27,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Who's Winning? Poker Hand Trainer",
-    description: "Practice identifying winning poker hands at every stage of Texas Hold'em",
-    images: ['https://images.unsplash.com/photo-1541278107931-e006523892df'], // Same image
+    title: "Day Zero Poker",
+    description: "Master the fundamentals of poker from day zero",
+    images: ['https://images.unsplash.com/photo-1541278107931-e006523892df'],
   },
 };
 

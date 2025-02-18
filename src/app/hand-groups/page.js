@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { HAND_GROUPS, getRandomHand, getHandGroup } from '@/utils/handGroups';
+import Footer from '@/components/Footer';
 
 export default function HandGroupQuiz() {
   const [currentHand, setCurrentHand] = useState(null);
@@ -89,6 +90,7 @@ export default function HandGroupQuiz() {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 } 
