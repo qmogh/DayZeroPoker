@@ -56,6 +56,21 @@ export default function Home() {
 
     const nextGameStage = stages[gameStage];
     
+    // Calculate odds if not at complete stage
+    if (nextGameStage !== 'complete') {
+      const playerOdds = players.reduce((acc, player) => {
+        const calculatedOdds = calculateWinningOdds(
+          player.cards,
+          communityCards,
+          players.length
+        );
+        acc[player.id] = calculatedOdds;
+        return acc;
+      }, {});
+      
+      setOdds(playerOdds);
+    }
+
     // Update visible cards based on stage
     switch(nextGameStage) {
       case 'flop':
