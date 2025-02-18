@@ -1,12 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-# Who's Winning? Poker Hand Trainer
+# Day Zero Poker
 
 So, I got a poker set for Christmas - yay! I started playing poker over the summer, but I'm not very good at it. My biggest issue that I can't read the board very quickly and also understand the potential of my hand. So, I built this!
 
-Poker Hand Trainer is a web-based poker training tool designed to help players improve their hand reading abilities in Texas Hold'em. Practice identifying winning hands at every stage of the game, from pre-flop to river.
+Day Zero Poker is a web-based poker training platform designed to help beginners master the fundamentals from day zero. It currently offers two training tools:
 
-## Features
+## 1. Poker Hand Trainer
+Practice identifying winning hands at every stage of Texas Hold'em:
 - Interactive hand evaluation practice
 - Support for 2-8 players
 - Real-time feedback at each stage (pre-flop, flop, turn, river)
@@ -14,12 +13,13 @@ Poker Hand Trainer is a web-based poker training tool designed to help players i
 - Accurate poker hand evaluation with proper tie-breaking
 - Instant feedback on your winning hand predictions
 
-## How It Works
-1. Select the number of players (2-8)
-2. At each stage, identify who you think is winning
-3. Progress through the hand (flop, turn, river)
-4. Get feedback on your predictions and see the actual winning hands
-5. Learn from comparing your guesses to the correct evaluations
+## 2. Hand Groups Quiz
+Test your knowledge of starting hand groups:
+- Practice categorizing starting hands into their correct groups
+- Learn which hands belong in which tier
+- Instant feedback on your answers
+- Toggle reference guide for learning
+- Track your progress with a score counter
 
 ## Tech Stack
 - Next.js
@@ -38,12 +38,7 @@ npm install
 npm run dev
 ```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000) with your browser to start practicing!
 
 ## Deploy on Vercel
 
@@ -51,4 +46,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to start practicing!
+## Resources
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Next.js GitHub repository](https://github.com/vercel/next.js)
