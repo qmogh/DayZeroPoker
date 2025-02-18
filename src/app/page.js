@@ -304,14 +304,22 @@ export default function Home() {
       <main className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold mb-8 text-white">Who's Winning? Poker Hand Trainer</h1>
-          {gameStage != "setup" && (
-            <button
-            onClick={() => setShowRankings(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Show Hand Rankings
-          </button>
-          )}
+          <div className="flex gap-4">
+            <a
+              href="/hand-groups"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Practice Hand Groups
+            </a>
+            {gameStage != "setup" && (
+              <button
+                onClick={() => setShowRankings(true)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Show Hand Rankings
+              </button>
+            )}
+          </div>
         </div>
         
         {gameStage === 'setup' && (
